@@ -1,0 +1,60 @@
+@startuml ProductSprintBacklog
+enum UserStoryType {
+    EPIC
+    ATOMICUSERSTORY
+}
+enum AcceptanceCriterionType {
+    FUNCTIONALACCEPTANCECRITERION
+    NONFUNCTIONALACCEPTANCECRITERION
+}
+
+class UserStory <<RSRO::REQUIREMENT ARTIFACT>>{
+string: importance
+string: effort
+date: createdDate
+date: updateDate
+
+UserStory: userstories
+AcceptanceCriterion: acceptancecritera
+}
+
+CommonConcept <|-- UserStory
+
+UserStory "1" -- "1" UserStoryType : type>
+UserStory "1" -- "0..*" UserStory : userstories >
+UserStory "1" -- "0..*" AcceptanceCriterion : acceptancecritera >
+
+class AcceptanceCriterion <<RSRO::REQUIREMENT>>{
+date: createdtDate
+
+}
+
+CommonConcept <|-- AcceptanceCriterion
+
+AcceptanceCriterion "1" -- "1" AcceptanceCriterionType : type>
+
+class ProductBacklog <<RSRO::REQUIREMENT>>{
+date: createdtDate
+
+UserStory: userstories
+}
+
+CommonConcept <|-- ProductBacklog
+
+
+ProductBacklog "1" -- "0..*" UserStory : userstories >
+
+class SprintBacklog <<SPO::DOCUMENT>>{
+date: createdtDate
+
+UserStory: userstories
+ScrumDevelopmentTask: scrumintendeddevelopmenttasks
+}
+
+CommonConcept <|-- SprintBacklog
+
+
+SprintBacklog "1" -- "0..*" UserStory : userstories >
+SprintBacklog "1" -- "0..*" ScrumProcess.ScrumDevelopmentTask : scrumintendeddevelopmenttasks >
+
+@enduml

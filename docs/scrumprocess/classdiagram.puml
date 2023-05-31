@@ -1,0 +1,89 @@
+@startuml ScrumProcess
+enum ScrumProjectType {
+    SCRUMCOMPLEXPROJECT
+    SCRUMATOMICPROJECT
+}
+enum ScrumDevelopmentTaskType {
+    PERFORMED
+    INTENDED
+}
+enum CeremonyType {
+    PLANNING
+    DAILY
+    REVIEW
+    RETROSPECTIVE
+}
+enum SucessfullyPerformedType {
+    NONSUCESSFULLY
+    SUCCESSFULLY
+}
+
+class ScrumProject <<SPO::SOFTWARE PROJECT>>{
+
+ScrumProcess: scrumprocess
+}
+
+CommonConcept <|-- ScrumProject
+
+ScrumProject "1" -- "1" ScrumProjectType : type>
+ScrumProject "1" -- "1" ScrumProcess : scrumprocess >
+
+class ScrumProcess <<SPO::GENERAL PERFORMED PROJECT PROCESS>>{
+
+Sprint: sprints
+}
+
+CommonConcept <|-- ScrumProcess
+
+
+ScrumProcess "1" -- "0..*" Sprint : sprints >
+
+class ProductBacklogDefinition <<SPO::SPECIFIC PERFORMED PROJECT PROCESS>>{
+
+ProductBacklog: productbacklog
+}
+
+CommonConcept <|-- ProductBacklogDefinition
+
+
+ProductBacklogDefinition "1" -- "0..*" ProductSprintBacklog.ProductBacklog : productbacklog >
+
+class Sprint <<SPO::SPECIFIC PERFORMED PROJECT PROCESS>>{
+
+SprintBacklog: sprintbacklog
+Ceremony: ceremonies
+ScrumDevelopmentTask: scrumdevelopmenttask
+}
+
+CommonConcept <|-- Sprint
+
+
+Sprint "1" -- "1" ProductSprintBacklog.SprintBacklog : sprintbacklog >
+Sprint "1" -- "0..*" Ceremony : ceremonies >
+Sprint "1" -- "0..*" ScrumDevelopmentTask : scrumdevelopmenttask >
+
+class Ceremony <<SPO::PERFORMED PROJECT ACTIVITY>>{
+
+SprintBacklog: sprintbacklog
+Person: people
+}
+
+CommonConcept <|-- Ceremony
+
+Ceremony "1" -- "1" CeremonyType : type>
+Ceremony "1" -- "1" ProductSprintBacklog.SprintBacklog : sprintbacklog >
+Ceremony "1" -- "0..*" Stakeholders.Person : people >
+
+class ScrumDevelopmentTask <<SPO::PERFORMED PROJECT ACTIVITY>>{
+
+ScrumDevelopmentTask: scrumdevelopmenttasks
+UserStory: userstory
+}
+
+CommonConcept <|-- ScrumDevelopmentTask
+
+ScrumDevelopmentTask "1" -- "1" ScrumDevelopmentTaskType : type>,ScrumDevelopmentTask "1" -- "1" SucessfullyPerformedType : sucessfully>
+ScrumDevelopmentTask "1" -- "0..*" ScrumDevelopmentTask : scrumdevelopmenttasks >
+ScrumDevelopmentTask "1" -- "1" ProductSprintBacklog.UserStory : userstory >
+
+@enduml

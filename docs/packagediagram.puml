@@ -1,0 +1,17 @@
+@startuml sro
+namespace StandardDefinition {
+
+}
+namespace ScrumProcess {
+
+}
+namespace Stakeholders {
+
+}
+namespace ProductSprintBacklog {
+
+}
+namespace ScrumDeliverable {
+
+}
+@enduml

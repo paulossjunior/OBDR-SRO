@@ -1,0 +1,253 @@
+Configuration {
+    software: "sro"
+    about: "Scrum Reference Ontology (SRO) provides a common and comprehensive conceptualization about Scrum in the software development context and can be used to support application integration."
+    package_path: "br.nemo.immigrant.ontology.entity"
+    database_name: "sro"
+    framework: "springdata"
+}
+
+# "Standard Concepts"
+module StandardDefinition {
+
+    abstract entity CommonConcept {
+
+        name: string
+        description: string
+        startDate: date
+        endDate: date 
+        url: string
+        externalId: string unique 
+        internalId: string unique
+    }
+
+}
+
+# "Subontology addresses the events that occur in a project that adopts Scrum, such as the Scrum ceremonies"
+module ScrumProcess {
+
+    enum ScrumProjectType{
+        SCRUMATOMICPROJECT, fullName : "Scrum Atomic Project"
+        SCRUMCOMPLEXPROJECT, fullName : "Scrum Complex Project"
+
+    }
+
+    enum ScrumDevelopmentTaskType{
+        PERFORMED, fullName : "Scrum Perfomed Development Task"
+        INTENDED , fullName : "Scrum Intended Development Task"
+    }
+
+    # "Type of Ceremony"
+    enum CeremonyType{
+        PLANNING, fullName: "Planning Meeting"
+        DAILY, fullName: "Daily Standup Meeting"
+        REVIEW, fullName: "Review Meeting"
+        RETROSPECTIVE, fullName: "Retrospetive Meeting"
+    }
+
+    # "Is a Software Project that adopts Scrum in its process (Scrum Process)."
+    entity ScrumProject extends StandardDefinition.CommonConcept{
+        ontology: spo concept: "Software Project"
+
+        scrumProcess OneToOne ScrumProcess
+        scrumProjects OneToMany ScrumProject
+        type uses ScrumProjectType
+        
+    }
+    # "Is a General Performed Project Process (i.e., it is an overall process performed in a project) composed        of two types of Specific Performed Project Process."
+    entity ScrumProcess extends StandardDefinition.CommonConcept{
+        
+        ontology: spo concept: "General Performed Project Process"
+        
+        sprints OneToMany Sprint
+        productBacklogDefinition OneToOne ProductBacklogDefinition
+    }
+    
+    # "Aims at defining and prioritizing the functionalities to be produced in the Scrum Project."
+    entity ProductBacklogDefinition extends StandardDefinition.CommonConcept{
+       ontology: spo concept: "Specific Performed Project Process"
+       
+       productBacklog OneToMany ProductSprintBacklog.ProductBacklog
+    }
+
+    # "A time-box used to perform a project activity."
+    entity Sprint extends StandardDefinition.CommonConcept{
+
+        ontology: spo concept: "Specific Performed Project Process"
+
+        sprintBacklog OneToOne ProductSprintBacklog.SprintBacklog
+        ceremonies OneToMany Ceremony
+        scrumDevelopmentTask ManyToMany ScrumDevelopmentTask
+    }
+    
+    # "The ceremonies that compose a Sprint are Planning Meeting, Daily Standup Meeting, Review Meeting and Retrospective Meeting."
+    entity Ceremony extends StandardDefinition.CommonConcept{
+
+        ontology: spo concept: "Performed Project Activity"
+        
+        type uses CeremonyType
+        sprintbacklog OneToOne ProductSprintBacklog.SprintBacklog
+        people OneToMany Stakeholders.Person
+    }
+
+    enum SucessfullyPerformedType{
+        NONSUCESSFULLY, fullName: "Non-Successfully Performed Scrum Development Task"
+        SUCCESSFULLY, fullName: "Successfully Performed Scrum Development Task"
+    }
+    
+    # "Is a Performed activity in a Scrum Project."
+    entity ScrumDevelopmentTask extends StandardDefinition.CommonConcept{
+        
+        ontology: spo concept: "Performed Project Activity"
+        
+        type uses ScrumDevelopmentTaskType
+        sucessfully uses SucessfullyPerformedType
+
+        scrumdevelopmenttasks OneToMany ScrumDevelopmentTask
+        userstory OneToOne UserStory
+    }
+    
+}
+
+# "Concerns the teams, agents and roles involved in a Scrum project"
+module Stakeholders {
+    
+    # "A Person that performs a role in a scrum project"
+    entity Person extends StandardDefinition.CommonConcept{
+        ontology: eo concept: "Person"
+        email: string
+        
+    }
+    
+    # "Scrum`s Roles"
+    enum ScrumRole{
+
+        DEVELOPER, fullName :"Developer"
+        SCRUMMASTER, fullName :"Scrum Master"
+        PRODUCTOWNER, fullName :"Product Owner"
+        CLIENT, fullName :"Client"
+
+    }
+    
+    # "Relation between Person and Team"
+    entity teammembership extends StandardDefinition.CommonConcept{
+        
+        ontology: eo concept: "Team Membership"     
+
+        scrumrole uses ScrumRole        
+        person OneToOne Person
+        scrumTeam OneToOne ScrumTeam
+        
+    }
+    # "A Team in a Scrum project"
+    entity ScrumTeam extends StandardDefinition.CommonConcept{
+        ontology: eo concept: "Team"
+        
+        softwareproject ManyToOne ScrumProcess.ScrumProject
+    } 
+}
+
+
+# "Addresses aspects related to the requirements established in a Scrum project and activities planned to materialize them"
+module ProductSprintBacklog{
+
+    # "Type of UserStory"
+    enum UserStoryType{
+
+        EPIC, fullName :"Epic"
+        ATOMICUSERSTORY, fullName :"Atomic User Story"       
+        
+    }
+    
+    # "A Requirement Artifact that describes Requirements in a Scrum Project."
+    entity UserStory extends StandardDefinition.CommonConcept{
+        ontology: rsro concept: "Requirement Artifact"
+        importance: string
+        effort: string 
+        
+        
+        createdDate: date
+        updateDate: date       
+        
+        type uses UserStoryType
+        userStories OneToMany UserStory
+        acceptanceCritera OneToMany AcceptanceCriterion
+
+    }
+
+     # "Type of Acceptance Criterion"
+    enum AcceptanceCriterionType{
+
+        FUNCTIONALACCEPTANCECRITERION, fullName :"Functional Acceptance Criterion"
+        NONFUNCTIONALACCEPTANCECRITERION, fullName :"Non-Functional Acceptance Criterion"       
+        
+    }
+
+    # "Requirements used to verify if the User Story was developed correctly and meets the client needs."
+    entity AcceptanceCriterion extends StandardDefinition.CommonConcept{
+        ontology: rsro concept: "Requirement"
+        createdtDate: date                       
+        type uses AcceptanceCriterionType
+
+
+    }
+
+    # "A Document that contains the requirements of the product to be developed in the Scrum Project"
+    entity ProductBacklog extends StandardDefinition.CommonConcept{
+        ontology: rsro concept: "Requirement"
+        createdtDate: date
+        userstories OneToMany UserStory
+    }
+
+    # "A Document that describes the Sprint planning"
+    entity SprintBacklog extends StandardDefinition.CommonConcept{
+        
+        ontology: spo concept: "Document"
+
+        createdtDate: date
+        userstories OneToMany UserStory
+        scrumintendeddevelopmenttasks OneToMany ScrumDevelopmentTask
+
+    } 
+
+}
+
+# "Focuses on the results produced during a Scrum project"
+module ScrumDeliverable{
+
+    # "Type of Deliverable"
+    enum DeliverableType{
+
+        NOTACCEPTEDDELIVERABLE, fullName :"Not Accepted Deliverable"
+        ACCEPTEDDELIVERABLE, fullName :"Accepted Deliverable"
+        
+    }
+    # "Is evaluated considering the Acceptance Criteria related to the User Stories it materializes."
+    entity Deliverable extends StandardDefinition.CommonConcept{
+        
+        ontology: spo concept: "Software Item"
+
+        userstories OneToMany ProductSprintBacklog.UserStory
+        type uses DeliverableType
+
+    }
+    
+    # "Accepted Deliverables produced in a Sprint are integrated forming a more complex and complete Software Item called Sprint Deliverable, which is the Sprint result delivered to the client"
+    entity SprintDeliverable extends StandardDefinition.CommonConcept{
+        
+        ontology: spo concept: "Software Item"
+
+        deliverables OneToMany Deliverable
+        sprint OneToOne ScrumProcess.Sprint
+    }
+    
+    # "Scrum Project Deliverable is a Software Product and, as such, it is composed of (i) one or more Software Items (e.g., programs) working together for satisfying certain needs, and (ii) other items to support the Software Product use or maintenance, such as documentation"
+    entity ScrumProjectDeliverable extends StandardDefinition.CommonConcept{
+
+        ontology: spo concept: "Software Product"
+
+        sprintdeliverables OneToMany SprintDeliverable
+        scrumProcess OneToOne ScrumProcess.ScrumProcess
+
+    }
+
+}

@@ -1,0 +1,17 @@
+
+ALTER TABLE public.scrumproject  REPLICA IDENTITY FULL;
+ALTER TABLE public.scrumprocess  REPLICA IDENTITY FULL;
+ALTER TABLE public.productbacklogdefinition  REPLICA IDENTITY FULL;
+ALTER TABLE public.sprint  REPLICA IDENTITY FULL;
+ALTER TABLE public.ceremony  REPLICA IDENTITY FULL;
+ALTER TABLE public.scrumdevelopmenttask  REPLICA IDENTITY FULL;
+ALTER TABLE public.person  REPLICA IDENTITY FULL;
+ALTER TABLE public.teammembership  REPLICA IDENTITY FULL;
+ALTER TABLE public.scrumteam  REPLICA IDENTITY FULL;
+ALTER TABLE public.userstory  REPLICA IDENTITY FULL;
+ALTER TABLE public.acceptancecriterion  REPLICA IDENTITY FULL;
+ALTER TABLE public.productbacklog  REPLICA IDENTITY FULL;
+ALTER TABLE public.sprintbacklog  REPLICA IDENTITY FULL;
+ALTER TABLE public.deliverable  REPLICA IDENTITY FULL;
+ALTER TABLE public.sprintdeliverable  REPLICA IDENTITY FULL;
+ALTER TABLE public.scrumprojectdeliverable  REPLICA IDENTITY FULL;

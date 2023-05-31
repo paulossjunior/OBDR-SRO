@@ -1,0 +1,40 @@
+@startuml Stakeholders
+enum ScrumRole {
+    DEVELOPER
+    SCRUMMASTER
+    PRODUCTOWNER
+    CLIENT
+}
+
+class Person <<EO::PERSON>>{
+string: email
+
+}
+
+CommonConcept <|-- Person
+
+
+
+class teammembership <<EO::TEAM MEMBERSHIP>>{
+
+Person: person
+ScrumTeam: scrumteam
+}
+
+CommonConcept <|-- teammembership
+
+teammembership "1" -- "1" ScrumRole : scrumrole>
+teammembership "1" -- "1" Person : person >
+teammembership "1" -- "1" ScrumTeam : scrumteam >
+
+class ScrumTeam <<EO::TEAM>>{
+
+ScrumProject: softwareproject
+}
+
+CommonConcept <|-- ScrumTeam
+
+
+ScrumTeam "1" -- "1" ScrumProcess.ScrumProject : softwareproject >
+
+@enduml

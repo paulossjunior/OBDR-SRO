@@ -1,0 +1,15 @@
+@startuml StandardDefinition
+
+class CommonConcept {
+string: name
+string: description
+date: startDate
+date: endDate
+string: externalId
+string: internalId
+
+}
+
+
+
+@enduml

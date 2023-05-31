@@ -1,0 +1,41 @@
+@startuml ScrumDeliverable
+enum DeliverableType {
+    NOTACCEPTEDDELIVERABLE
+    ACCEPTEDDELIVERABLE
+}
+
+class Deliverable <<SPO::SOFTWARE ITEM>>{
+
+UserStory: userstories
+}
+
+CommonConcept <|-- Deliverable
+
+Deliverable "1" -- "1" DeliverableType : type>
+Deliverable "1" -- "0..*" ProductSprintBacklog.UserStory : userstories >
+
+class SprintDeliverable <<SPO::SOFTWARE ITEM>>{
+
+Deliverable: deliverables
+Sprint: sprint
+}
+
+CommonConcept <|-- SprintDeliverable
+
+
+SprintDeliverable "1" -- "0..*" Deliverable : deliverables >
+SprintDeliverable "1" -- "1" ScrumProcess.Sprint : sprint >
+
+class ScrumProjectDeliverable <<SPO::SOFTWARE PRODUCT>>{
+
+SprintDeliverable: sprintdeliverables
+ScrumProcess: scrumprocess
+}
+
+CommonConcept <|-- ScrumProjectDeliverable
+
+
+ScrumProjectDeliverable "1" -- "0..*" SprintDeliverable : sprintdeliverables >
+ScrumProjectDeliverable "1" -- "1" ScrumProcess.ScrumProcess : scrumprocess >
+
+@enduml
